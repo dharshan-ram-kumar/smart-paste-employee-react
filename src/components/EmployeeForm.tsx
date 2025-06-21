@@ -36,11 +36,65 @@ export const EmployeeForm = ({ employee, onBack, onSave }: EmployeeFormProps) =>
   const [activeTab, setActiveTab] = useState("Overview");
   const [userDetailsExpanded, setUserDetailsExpanded] = useState(false);
 
-  const handleSmartPaste = () => {
-    // Smart paste functionality - could parse clipboard data
-    console.log("Smart Paste clicked - would parse clipboard data here");
-    // For demo, we'll show a toast
-    alert("Smart Paste feature would analyze clipboard data and auto-fill relevant fields");
+  const parseClipboardData = (text: string) => {
+    // Extract names from common patterns
+    const patterns = {
+      firstName: /first name (?:is )?(\w+)/i,
+      lastName: /last name (?:is )?(\w+)/i,
+      fullName: /name (?:is )?(\w+ \w+)/i,
+      username: /username (?:is )?(\w+)/i,
+    };
+
+    let extractedData: any = {};
+
+    // Try to extract first name
+    const firstNameMatch = text.match(patterns.firstName);
+    if (firstNameMatch) {
+      extractedData.firstName = firstNameMatch[1];
+    }
+
+    // Try to extract last name
+    const lastNameMatch = text.match(patterns.lastName);
+    if (lastNameMatch) {
+      extractedData.lastName = lastNameMatch[1];
+    }
+
+    // If no first/last name found separately, try full name
+    if (!extractedData.firstName && !extractedData.lastName) {
+      const fullNameMatch = text.match(patterns.fullName);
+      if (fullNameMatch) {
+        const nameParts = fullNameMatch[1].split(' ');
+        extractedData.firstName = nameParts[0];
+        if (nameParts.length > 1) {
+          extractedData.lastName = nameParts.slice(1).join(' ');
+        }
+      }
+    }
+
+    return extractedData;
+  };
+
+  const handleSmartPaste = async () => {
+    try {
+      const clipboardText = await navigator.clipboard.readText();
+      console.log("Clipboard content:", clipboardText);
+      
+      const extractedData = parseClipboardData(clipboardText);
+      console.log("Extracted data:", extractedData);
+      
+      if (Object.keys(extractedData).length > 0) {
+        setFormData(prev => ({
+          ...prev,
+          ...extractedData
+        }));
+        alert(`Smart Paste successful! Extracted: ${Object.keys(extractedData).join(', ')}`);
+      } else {
+        alert("No recognizable name data found in clipboard");
+      }
+    } catch (error) {
+      console.error("Failed to read clipboard:", error);
+      alert("Failed to access clipboard. Please make sure you have copied text to clipboard.");
+    }
   };
 
   const handleSave = () => {
