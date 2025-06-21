@@ -1,11 +1,17 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ArrowLeft, ChevronDown, Wand2 } from "lucide-react";
 import { FormTabs } from "./FormTabs";
+import { extractSmartData } from "../../utils/gemini";
 
 interface EmployeeFormProps {
   employee?: any;
@@ -13,7 +19,11 @@ interface EmployeeFormProps {
   onSave: () => void;
 }
 
-export const EmployeeForm = ({ employee, onBack, onSave }: EmployeeFormProps) => {
+export const EmployeeForm = ({
+  employee,
+  onBack,
+  onSave,
+}: EmployeeFormProps) => {
   const [formData, setFormData] = useState({
     series: "HR-EMP-",
     firstName: employee?.fullName?.split(" ")[0] || "",
@@ -30,70 +40,67 @@ export const EmployeeForm = ({ employee, onBack, onSave }: EmployeeFormProps) =>
     department: "",
     reportsTo: "",
     grade: "",
-    employmentType: ""
+    employmentType: "",
   });
 
   const [activeTab, setActiveTab] = useState("Overview");
   const [userDetailsExpanded, setUserDetailsExpanded] = useState(false);
 
-  const parseClipboardData = (text: string) => {
-    // Extract names from common patterns
-    const patterns = {
-      firstName: /first name (?:is )?(\w+)/i,
-      lastName: /last name (?:is )?(\w+)/i,
-      fullName: /name (?:is )?(\w+ \w+)/i,
-      username: /username (?:is )?(\w+)/i,
-    };
+  // const parseClipboardData = (text: string) => {
+  //   // Extract names from common patterns
+  //   const patterns = {
+  //     firstName: /first name (?:is )?(\w+)/i,
+  //     lastName: /last name (?:is )?(\w+)/i,
+  //     fullName: /name (?:is )?(\w+ \w+)/i,
+  //     username: /username (?:is )?(\w+)/i,
+  //   };
 
-    let extractedData: any = {};
+  //   let extractedData: any = {};
 
-    // Try to extract first name
-    const firstNameMatch = text.match(patterns.firstName);
-    if (firstNameMatch) {
-      extractedData.firstName = firstNameMatch[1];
-    }
+  //   // Try to extract first name
+  //   const firstNameMatch = text.match(patterns.firstName);
+  //   if (firstNameMatch) {
+  //     extractedData.firstName = firstNameMatch[1];
+  //   }
 
-    // Try to extract last name
-    const lastNameMatch = text.match(patterns.lastName);
-    if (lastNameMatch) {
-      extractedData.lastName = lastNameMatch[1];
-    }
+  //   // Try to extract last name
+  //   const lastNameMatch = text.match(patterns.lastName);
+  //   if (lastNameMatch) {
+  //     extractedData.lastName = lastNameMatch[1];
+  //   }
 
-    // If no first/last name found separately, try full name
-    if (!extractedData.firstName && !extractedData.lastName) {
-      const fullNameMatch = text.match(patterns.fullName);
-      if (fullNameMatch) {
-        const nameParts = fullNameMatch[1].split(' ');
-        extractedData.firstName = nameParts[0];
-        if (nameParts.length > 1) {
-          extractedData.lastName = nameParts.slice(1).join(' ');
-        }
-      }
-    }
+  //   // If no first/last name found separately, try full name
+  //   if (!extractedData.firstName && !extractedData.lastName) {
+  //     const fullNameMatch = text.match(patterns.fullName);
+  //     if (fullNameMatch) {
+  //       const nameParts = fullNameMatch[1].split(" ");
+  //       extractedData.firstName = nameParts[0];
+  //       if (nameParts.length > 1) {
+  //         extractedData.lastName = nameParts.slice(1).join(" ");
+  //       }
+  //     }
+  //   }
 
-    return extractedData;
-  };
+  //   return extractedData;
+  // };
 
   const handleSmartPaste = async () => {
     try {
       const clipboardText = await navigator.clipboard.readText();
-      console.log("Clipboard content:", clipboardText);
-      
-      const extractedData = parseClipboardData(clipboardText);
-      console.log("Extracted data:", extractedData);
-      
+      const extractedData = await extractSmartData(clipboardText);
+
       if (Object.keys(extractedData).length > 0) {
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
-          ...extractedData
+          ...extractedData,
         }));
-        alert(`Smart Paste successful! Extracted: ${Object.keys(extractedData).join(', ')}`);
+        alert("Smart Paste successful");
       } else {
-        alert("No recognizable name data found in clipboard");
+        alert("No recognizable data found.");
       }
-    } catch (error) {
-      console.error("Failed to read clipboard:", error);
-      alert("Failed to access clipboard. Please make sure you have copied text to clipboard.");
+    } catch (err) {
+      console.error("Smart Paste failed:", err);
+      alert("Smart Paste failed.");
     }
   };
 
@@ -122,17 +129,20 @@ export const EmployeeForm = ({ employee, onBack, onSave }: EmployeeFormProps) =>
               )}
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-3">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={handleSmartPaste}
               className="flex items-center space-x-2"
             >
               <Wand2 className="w-4 h-4" />
               <span>Smart Paste</span>
             </Button>
-            <Button onClick={handleSave} className="bg-gray-900 hover:bg-gray-800">
+            <Button
+              onClick={handleSave}
+              className="bg-gray-900 hover:bg-gray-800"
+            >
               Save
             </Button>
           </div>
@@ -148,10 +158,18 @@ export const EmployeeForm = ({ employee, onBack, onSave }: EmployeeFormProps) =>
           {/* Basic Information */}
           <div className="grid grid-cols-3 gap-6 mb-8">
             <div>
-              <Label htmlFor="series" className="text-sm font-medium text-gray-700">
+              <Label
+                htmlFor="series"
+                className="text-sm font-medium text-gray-700"
+              >
                 Series <span className="text-red-500">*</span>
               </Label>
-              <Select value={formData.series} onValueChange={(value) => setFormData({...formData, series: value})}>
+              <Select
+                value={formData.series}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, series: value })
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -162,26 +180,36 @@ export const EmployeeForm = ({ employee, onBack, onSave }: EmployeeFormProps) =>
             </div>
 
             <div>
-              <Label htmlFor="gender" className="text-sm font-medium text-gray-700">
+              <Label
+                htmlFor="gender"
+                className="text-sm font-medium text-gray-700"
+              >
                 Gender <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="gender"
                 value={formData.gender}
-                onChange={(e) => setFormData({...formData, gender: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, gender: e.target.value })
+                }
                 className="bg-gray-50"
               />
             </div>
 
             <div>
-              <Label htmlFor="dateOfJoining" className="text-sm font-medium text-gray-700">
+              <Label
+                htmlFor="dateOfJoining"
+                className="text-sm font-medium text-gray-700"
+              >
                 Date of Joining <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="dateOfJoining"
                 type="date"
                 value={formData.dateOfJoining}
-                onChange={(e) => setFormData({...formData, dateOfJoining: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, dateOfJoining: e.target.value })
+                }
                 className="bg-gray-50"
               />
             </div>
@@ -189,35 +217,53 @@ export const EmployeeForm = ({ employee, onBack, onSave }: EmployeeFormProps) =>
 
           <div className="grid grid-cols-3 gap-6 mb-8">
             <div>
-              <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">
+              <Label
+                htmlFor="firstName"
+                className="text-sm font-medium text-gray-700"
+              >
                 First Name <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="firstName"
                 value={formData.firstName}
-                onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, firstName: e.target.value })
+                }
                 className="bg-gray-50"
               />
             </div>
 
             <div>
-              <Label htmlFor="dateOfBirth" className="text-sm font-medium text-gray-700">
+              <Label
+                htmlFor="dateOfBirth"
+                className="text-sm font-medium text-gray-700"
+              >
                 Date of Birth <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="dateOfBirth"
                 type="date"
                 value={formData.dateOfBirth}
-                onChange={(e) => setFormData({...formData, dateOfBirth: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, dateOfBirth: e.target.value })
+                }
                 className="bg-gray-50"
               />
             </div>
 
             <div>
-              <Label htmlFor="status" className="text-sm font-medium text-gray-700">
+              <Label
+                htmlFor="status"
+                className="text-sm font-medium text-gray-700"
+              >
                 Status <span className="text-red-500">*</span>
               </Label>
-              <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value})}>
+              <Select
+                value={formData.status}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, status: value })
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -231,25 +277,35 @@ export const EmployeeForm = ({ employee, onBack, onSave }: EmployeeFormProps) =>
 
           <div className="grid grid-cols-3 gap-6 mb-8">
             <div>
-              <Label htmlFor="middleName" className="text-sm font-medium text-gray-700">
+              <Label
+                htmlFor="middleName"
+                className="text-sm font-medium text-gray-700"
+              >
                 Middle Name
               </Label>
               <Input
                 id="middleName"
                 value={formData.middleName}
-                onChange={(e) => setFormData({...formData, middleName: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, middleName: e.target.value })
+                }
                 className="bg-gray-50"
               />
             </div>
 
             <div>
-              <Label htmlFor="salutation" className="text-sm font-medium text-gray-700">
+              <Label
+                htmlFor="salutation"
+                className="text-sm font-medium text-gray-700"
+              >
                 Salutation
               </Label>
               <Input
                 id="salutation"
                 value={formData.salutation}
-                onChange={(e) => setFormData({...formData, salutation: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, salutation: e.target.value })
+                }
                 className="bg-gray-50"
               />
             </div>
@@ -259,13 +315,18 @@ export const EmployeeForm = ({ employee, onBack, onSave }: EmployeeFormProps) =>
 
           <div className="grid grid-cols-3 gap-6 mb-8">
             <div>
-              <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">
+              <Label
+                htmlFor="lastName"
+                className="text-sm font-medium text-gray-700"
+              >
                 Last Name
               </Label>
               <Input
                 id="lastName"
                 value={formData.lastName}
-                onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, lastName: e.target.value })
+                }
                 className="bg-gray-50"
               />
             </div>
@@ -277,48 +338,69 @@ export const EmployeeForm = ({ employee, onBack, onSave }: EmployeeFormProps) =>
               onClick={() => setUserDetailsExpanded(!userDetailsExpanded)}
               className="flex items-center space-x-2 text-lg font-medium text-gray-900 mb-4"
             >
-              <ChevronDown className={`w-5 h-5 transition-transform ${userDetailsExpanded ? 'rotate-180' : ''}`} />
+              <ChevronDown
+                className={`w-5 h-5 transition-transform ${
+                  userDetailsExpanded ? "rotate-180" : ""
+                }`}
+              />
               <span>User Details</span>
             </button>
           </div>
 
           {/* Company Details */}
           <div className="mb-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Company Details</h3>
-            
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Company Details
+            </h3>
+
             <div className="grid grid-cols-3 gap-6 mb-6">
               <div>
-                <Label htmlFor="company" className="text-sm font-medium text-gray-700">
+                <Label
+                  htmlFor="company"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Company <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="company"
                   value={formData.company}
-                  onChange={(e) => setFormData({...formData, company: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, company: e.target.value })
+                  }
                   className="bg-gray-50"
                 />
               </div>
 
               <div>
-                <Label htmlFor="designation" className="text-sm font-medium text-gray-700">
+                <Label
+                  htmlFor="designation"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Designation
                 </Label>
                 <Input
                   id="designation"
                   value={formData.designation}
-                  onChange={(e) => setFormData({...formData, designation: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, designation: e.target.value })
+                  }
                   className="bg-gray-50"
                 />
               </div>
 
               <div>
-                <Label htmlFor="branch" className="text-sm font-medium text-gray-700">
+                <Label
+                  htmlFor="branch"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Branch
                 </Label>
                 <Input
                   id="branch"
                   value={formData.branch}
-                  onChange={(e) => setFormData({...formData, branch: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, branch: e.target.value })
+                  }
                   className="bg-gray-50"
                 />
               </div>
@@ -326,37 +408,52 @@ export const EmployeeForm = ({ employee, onBack, onSave }: EmployeeFormProps) =>
 
             <div className="grid grid-cols-3 gap-6 mb-6">
               <div>
-                <Label htmlFor="department" className="text-sm font-medium text-gray-700">
+                <Label
+                  htmlFor="department"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Department
                 </Label>
                 <Input
                   id="department"
                   value={formData.department}
-                  onChange={(e) => setFormData({...formData, department: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, department: e.target.value })
+                  }
                   className="bg-gray-50"
                 />
               </div>
 
               <div>
-                <Label htmlFor="reportsTo" className="text-sm font-medium text-gray-700">
+                <Label
+                  htmlFor="reportsTo"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Reports to
                 </Label>
                 <Input
                   id="reportsTo"
                   value={formData.reportsTo}
-                  onChange={(e) => setFormData({...formData, reportsTo: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, reportsTo: e.target.value })
+                  }
                   className="bg-gray-50"
                 />
               </div>
 
               <div>
-                <Label htmlFor="grade" className="text-sm font-medium text-gray-700">
+                <Label
+                  htmlFor="grade"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Grade
                 </Label>
                 <Input
                   id="grade"
                   value={formData.grade}
-                  onChange={(e) => setFormData({...formData, grade: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, grade: e.target.value })
+                  }
                   className="bg-gray-50"
                 />
               </div>
@@ -364,13 +461,18 @@ export const EmployeeForm = ({ employee, onBack, onSave }: EmployeeFormProps) =>
 
             <div className="grid grid-cols-3 gap-6">
               <div>
-                <Label htmlFor="employmentType" className="text-sm font-medium text-gray-700">
+                <Label
+                  htmlFor="employmentType"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Employment Type
                 </Label>
                 <Input
                   id="employmentType"
                   value={formData.employmentType}
-                  onChange={(e) => setFormData({...formData, employmentType: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, employmentType: e.target.value })
+                  }
                   className="bg-gray-50"
                 />
               </div>
