@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Filter, MoreHorizontal, Heart, MessageCircle } from "lucide-react";
+import { Filter, Heart, MessageCircle } from "lucide-react";
 
 interface EmployeeListProps {
   onEditEmployee: (employee: any) => void;
@@ -95,7 +95,6 @@ export const EmployeeList = ({ onEditEmployee }: EmployeeListProps) => {
 
   return (
     <div className="bg-white rounded-lg border border-gray-200">
-      {/* Table Header */}
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -120,7 +119,6 @@ export const EmployeeList = ({ onEditEmployee }: EmployeeListProps) => {
         </div>
       </div>
 
-      {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50">
@@ -198,7 +196,6 @@ export const EmployeeList = ({ onEditEmployee }: EmployeeListProps) => {
         </table>
       </div>
 
-      {/* Pagination */}
       <div className="px-6 py-4 border-t border-gray-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">

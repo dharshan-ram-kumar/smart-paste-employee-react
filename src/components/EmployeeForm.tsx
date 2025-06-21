@@ -111,7 +111,6 @@ export const EmployeeForm = ({
 
   return (
     <div className="flex-1 bg-white">
-      {/* Header */}
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -149,13 +148,10 @@ export const EmployeeForm = ({
         </div>
       </div>
 
-      {/* Form Tabs */}
       <FormTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {/* Form Content */}
       <div className="p-6">
         <div className="max-w-4xl">
-          {/* Basic Information */}
           <div className="grid grid-cols-3 gap-6 mb-8">
             <div>
               <Label
@@ -332,7 +328,6 @@ export const EmployeeForm = ({
             </div>
           </div>
 
-          {/* User Details Section */}
           <div className="mb-8">
             <button
               onClick={() => setUserDetailsExpanded(!userDetailsExpanded)}
@@ -347,7 +342,6 @@ export const EmployeeForm = ({
             </button>
           </div>
 
-          {/* Company Details */}
           <div className="mb-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
               Company Details
