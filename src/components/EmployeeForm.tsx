@@ -257,7 +257,7 @@ export const EmployeeForm = ({ employee, onBack, onSave }: EmployeeFormProps) =>
             <div></div>
           </div>
 
-          <div className="mb-8">
+          <div className="grid grid-cols-3 gap-6 mb-8">
             <div>
               <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">
                 Last Name
