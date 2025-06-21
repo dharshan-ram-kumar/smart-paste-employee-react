@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Filter, MoreHorizontal, Heart, MessageCircle } from "lucide-react";
+import { Filter, Heart, MessageCircle } from "lucide-react";
 
 interface EmployeeListProps {
   onEditEmployee: (employee: any) => void;
@@ -10,28 +9,28 @@ interface EmployeeListProps {
 
 const mockEmployees = [
   {
-    id: "HR-EMP-00001",
+    id: "TRL 907",
     fullName: "Dharshan",
     status: "Active",
     designation: "",
     department: "",
-    daysAgo: "4 d"
+    daysAgo: "4 d",
   },
   {
     id: "TRL 134",
-    fullName: "JAIGANESH J",
+    fullName: "Lokesh",
     status: "Active",
     designation: "Senior Technical L...",
     department: "",
-    daysAgo: "4 d"
+    daysAgo: "4 d",
   },
   {
-    id: "TRL 148",
-    fullName: "KAVERIPRASATH KAVERISUNDHARA",
+    id: "TRL 806",
+    fullName: "Dinesh kumar",
     status: "Active",
     designation: "Exective- Operations",
     department: "",
-    daysAgo: "4 d"
+    daysAgo: "4 d",
   },
   {
     id: "TRL 338",
@@ -39,40 +38,40 @@ const mockEmployees = [
     status: "Active",
     designation: "Senior Network Ad...",
     department: "",
-    daysAgo: "4 d"
+    daysAgo: "4 d",
   },
   {
-    id: "TRL 571",
-    fullName: "SARAVANAN DHATCHINAMOORTHY",
+    id: "TRL 906",
+    fullName: "Haripriya",
     status: "Active",
     designation: "Executive-Operatio...",
     department: "",
-    daysAgo: "4 d"
+    daysAgo: "4 d",
   },
   {
     id: "TRL 642",
-    fullName: "JAYA VEERA PANDIYAN GANESAN",
+    fullName: "Tharun Kumar",
     status: "Active",
     designation: "Associate Director ...",
     department: "",
-    daysAgo: "4 d"
+    daysAgo: "4 d",
   },
   {
     id: "TRL 668",
-    fullName: "PARAG DILIP SHELAR",
+    fullName: "Harini",
     status: "Active",
     designation: "Sr. SEO Specialist",
     department: "",
-    daysAgo: "4 d"
+    daysAgo: "4 d",
   },
   {
     id: "TRL 670",
-    fullName: "KUMARESAN MURUGESAN",
+    fullName: "Kishore",
     status: "Active",
     designation: "Director-Delivery ...",
     department: "",
-    daysAgo: "4 d"
-  }
+    daysAgo: "4 d",
+  },
 ];
 
 export const EmployeeList = ({ onEditEmployee }: EmployeeListProps) => {
@@ -80,7 +79,7 @@ export const EmployeeList = ({ onEditEmployee }: EmployeeListProps) => {
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedEmployees(mockEmployees.map(emp => emp.id));
+      setSelectedEmployees(mockEmployees.map((emp) => emp.id));
     } else {
       setSelectedEmployees([]);
     }
@@ -90,13 +89,12 @@ export const EmployeeList = ({ onEditEmployee }: EmployeeListProps) => {
     if (checked) {
       setSelectedEmployees([...selectedEmployees, employeeId]);
     } else {
-      setSelectedEmployees(selectedEmployees.filter(id => id !== employeeId));
+      setSelectedEmployees(selectedEmployees.filter((id) => id !== employeeId));
     }
   };
 
   return (
     <div className="bg-white rounded-lg border border-gray-200">
-      {/* Table Header */}
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -108,7 +106,7 @@ export const EmployeeList = ({ onEditEmployee }: EmployeeListProps) => {
               Filter
             </Button>
           </div>
-          
+
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-600">20 of 127</span>
             <div className="flex items-center space-x-2">
@@ -121,7 +119,6 @@ export const EmployeeList = ({ onEditEmployee }: EmployeeListProps) => {
         </div>
       </div>
 
-      {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50">
@@ -145,9 +142,7 @@ export const EmployeeList = ({ onEditEmployee }: EmployeeListProps) => {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 ID
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                
-              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
@@ -155,7 +150,11 @@ export const EmployeeList = ({ onEditEmployee }: EmployeeListProps) => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {mockEmployees.map((employee) => (
-              <tr key={employee.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => onEditEmployee(employee)}>
+              <tr
+                key={employee.id}
+                className="hover:bg-gray-50 cursor-pointer"
+                onClick={() => onEditEmployee(employee)}
+              >
                 <td className="px-6 py-4">
                   <input
                     type="checkbox"
@@ -197,7 +196,6 @@ export const EmployeeList = ({ onEditEmployee }: EmployeeListProps) => {
         </table>
       </div>
 
-      {/* Pagination */}
       <div className="px-6 py-4 border-t border-gray-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
