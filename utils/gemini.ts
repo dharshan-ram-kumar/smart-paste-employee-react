@@ -1,5 +1,5 @@
 import axios from "axios";
-import { smartDataPrompt } from "../utils/prompt";
+import { prompt } from "../utils/prompt";
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
@@ -8,13 +8,13 @@ const cleanJsonBlock = (text: string): string => {
   return match ? match[0] : "";
 };
 
-export const extractSmartData = async (rawText: string) => {
+export const extractData = async (rawText: string) => {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
   const body = {
     contents: [
       {
-        parts: [{ text: smartDataPrompt(rawText) }],
+        parts: [{ text: prompt(rawText) }],
       },
     ],
   };

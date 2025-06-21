@@ -1,4 +1,4 @@
-export const smartDataPrompt = (rawText: string) =>
+export const prompt = (rawText: string) =>
   `
 You are an AI assistant that extracts employee details from text. The input may be in freeform natural language or in a label-based format like:
 

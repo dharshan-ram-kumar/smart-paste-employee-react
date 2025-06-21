@@ -9,9 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, ChevronDown, Wand2 } from "lucide-react";
+import { ArrowLeft, ChevronDown } from "lucide-react";
 import { FormTabs } from "./FormTabs";
-import { extractSmartData } from "../../utils/gemini";
+import { extractData } from "../../utils/gemini";
+import { SmartPasteButton } from "./smartPasting";
 
 interface EmployeeFormProps {
   employee?: any;
@@ -87,7 +88,7 @@ export const EmployeeForm = ({
   const handleSmartPaste = async () => {
     try {
       const clipboardText = await navigator.clipboard.readText();
-      const extractedData = await extractSmartData(clipboardText);
+      const extractedData = await extractData(clipboardText);
 
       if (Object.keys(extractedData).length > 0) {
         setFormData((prev) => ({
@@ -130,14 +131,15 @@ export const EmployeeForm = ({
           </div>
 
           <div className="flex items-center space-x-3">
-            <Button
-              variant="outline"
-              onClick={handleSmartPaste}
-              className="flex items-center space-x-2"
-            >
-              <Wand2 className="w-4 h-4" />
-              <span>Smart Paste</span>
-            </Button>
+            <SmartPasteButton
+              onDataExtracted={(extractedData) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  ...extractedData,
+                }));
+              }}
+            />
+
             <Button
               onClick={handleSave}
               className="bg-gray-900 hover:bg-gray-800"
