@@ -1,40 +1,25 @@
 export const prompt = (rawText: string) =>
   `
-You are an AI assistant that extracts employee details from text. The input may be in freeform natural language or in a label-based format like:
+You are an AI assistant that extracts structured data from input text. The input may be freeform natural language or label-based form data, such as:
 
 Name: Mr. John Doe  
 Gender: Male  
 Date of Birth: 07/23/2002  
-Date of Joining: 01/01/2024  
-Designation: Software Developer  
-Department: Engineering  
-Reports To: Jane Smith
+Leave Type: Casual Leave  
+From Date: June 24, 2025  
+Reason: Family emergency  
+Company: Tringapps  
+Status: Pending
 
-Your output must be clean JSON in the following format:
 
-{
-  "series": "HR-EMP-",
-  "firstName": "",
-  "middleName": "",
-  "lastName": "",
-  "gender": "",
-  "dateOfBirth": "YYYY-MM-DD",
-  "dateOfJoining": "YYYY-MM-DD",
-  "status": "Active",
-  "salutation": "",
-  "company": "Tringapps",
-  "designation": "",
-  "branch": "",
-  "department": "",
-  "reportsTo": "",
-  "grade": "",
-  "employmentType": ""
-}
+Your task is to parse this into a clean JSON object with inferred and normalized field names and values.
 
 **Rules:**
-- Parse full name into: salutation, firstName, middleName, lastName
-- Format all dates as YYYY-MM-DD (ISO 8601)
-- Return **only** the JSON object with no extra text, markdown, or explanation
+- Return only the extracted fields as key-value pairs.
+- Normalize all dates to ISO 8601 format: YYYY-MM-DD
+- Split full names into: salutation, firstName, middleName, lastName (if applicable)
+- Detect types like dates, names, IDs, statuses, departments, etc.
+- Return only the JSON object. No extra text or explanations.
 
 Input:
 """
